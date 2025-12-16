@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Delete, Plus } from "lucide-react";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 
 const api = axios.create({
@@ -14,6 +15,30 @@ const api = axios.create({
 });
 
 export default function Page() {
+
+  const [authUser, setAuthUser] = useState(false);
+  const [authAdmin, setAuthAdmin] = useState(false);
+
+  const checkAuth = async () => {
+    try {
+      const response = await api.get('/auth');
+      setAuthUser(response.status === 200);
+      return response.status === 200;
+    } catch (error) {
+      setAuthUser(false);
+      return false;
+    }
+  }
+
+  const checkAdmin = async () => {
+    try {
+      const response = await api.get('/auth/checkAdmin');
+      setAuthAdmin(response.data);
+    } catch (error) {
+      setAuthAdmin(false);
+      return false;
+    }
+  }
   const [isSaving, setIsSaving] = useState(false)
   const [cities, setCities] = useState<{ id: number, title: string }[]>([])
   const [changeCities, setChangeCities] = useState<Record<number, { id: number, title: string, isDelete: boolean, isNew: boolean }>>({})
@@ -45,6 +70,42 @@ export default function Page() {
       return newData
     })
   }, [])
+
+
+  useEffect(async () => {
+    await checkAuth();
+    await checkAdmin();
+  }, []);
+
+  if (!authUser) {
+    return <div className="w-full h-screen flex items-center justify-center">
+      <Card>
+        <CardHeader>
+          <CardTitle>Ошибка доступа</CardTitle>
+          <CardDescription>Вы не авторизованы</CardDescription>
+        </CardHeader>
+        <CardFooter>
+          <Button onClick={() => window.location.href = '/'}>Вернуться на главную</Button>
+        </CardFooter>
+      </Card>
+    </div>
+  }
+
+  if (!authAdmin) {
+    return <div className="w-full h-screen flex items-center justify-center">
+      <Card>
+        <CardHeader>
+          <CardTitle>Ошибка доступа</CardTitle>
+          <CardDescription>Вы не администратор</CardDescription>
+        </CardHeader>
+        <CardFooter>
+          <Button onClick={() => window.location.href = '/'}>Вернуться на главную</Button>
+        </CardFooter>
+      </Card>
+    </div>
+  }
+
+
 
   return (
     <div className="w-full min-h-screen flex flex-col">

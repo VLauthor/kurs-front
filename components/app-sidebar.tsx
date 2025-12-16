@@ -14,12 +14,12 @@ import {
 const items = [
   {
     title: "Города",
-    url: "cities",
+    url: "/admin/cities",
     icon: Home,
   },
   {
     title: "Рестораны",
-    url: "restaurants",
+    url: "/admin/restaurants",
     icon: Inbox,
   }
 ]
