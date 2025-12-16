@@ -32,7 +32,6 @@ export default function Page() {
     handleGetCities()
   }, [])
 
-  // Используем useCallback для стабильной ссылки на функцию
   const handleAddCity = useCallback(() => {
     setChangeCities(oldData => {
       let maxId = 0
@@ -41,7 +40,6 @@ export default function Page() {
       })
       maxId++
 
-      // Создаем новый объект, а не мутируем старый
       const newData = { ...oldData }
       newData[maxId] = { isNew: true, isDelete: false, id: maxId, title: '' }
       return newData
